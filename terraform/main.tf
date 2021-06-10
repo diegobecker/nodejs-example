@@ -87,3 +87,23 @@ output "public_ip" {
 output "public_dns" {
   value = aws_instance.dev.public_dns
 }
+
+
+resource "aws_route53_zone" "zone" {
+  name              = "myzonedb.app.br"
+#   delegation_set_id = "${var.delegation_set_id}"
+}
+
+resource "aws_route53_record" "ns" {
+  zone_id = aws_route53_zone.zone.zone_id
+  name    = "myzonedb.app.br"
+  type    = "NS"
+  ttl     = "60"
+
+  records = [
+    aws_route53_zone.zone.name_servers.0,
+    aws_route53_zone.zone.name_servers.1,
+    aws_route53_zone.zone.name_servers.2,
+    aws_route53_zone.zone.name_servers.3,
+  ]
+}
